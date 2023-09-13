@@ -23,7 +23,7 @@ public class Barbershop extends Thread {
             try {
                 sleep(CUSTOMER_INTERVAL);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -50,7 +50,7 @@ public class Barbershop extends Thread {
         try {
             sleep(WORK_TIME);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         System.out.println("Barber finished work");
         mutex.release();
@@ -61,7 +61,7 @@ public class Barbershop extends Thread {
             sleep(CHILL_TIME);
             System.out.println("Barber are ready to work");
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
