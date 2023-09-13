@@ -9,15 +9,20 @@ public class Barbershop extends Thread {
     public static Semaphore barber = new Semaphore(1);
     public static Semaphore mutex = new Semaphore(1);
     public static int waiting = 0;
+    private static final int COUNT = 20;
+    private static int currentCount = 0;
+    private final static int CHILL_TIME = 1500;
+    private final static int WORK_TIME = 3500;
+    private final static int CUSTOMER_INTERVAL = 2000;
 
     public static void main(String[] args) {
         Barbershop barber = new Barbershop();
         barber.start();
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= COUNT; i++) {
             Customer customer = new Customer(i);
             customer.start();
             try {
-                sleep(2000);
+                sleep(CUSTOMER_INTERVAL);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -35,19 +40,30 @@ public class Barbershop extends Thread {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            if (COUNT == currentCount) {
+                break;
+            }
         }
     }
 
     public void cutHair() {
         System.out.println("The barber is cutting hair");
         try {
-            sleep(3500);
+            sleep(WORK_TIME);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         System.out.println("Barber finished work");
         mutex.release();
         barber.release();
+        try {
+            sleep(CHILL_TIME);
+            System.out.println("Barber are chilling out");
+            sleep(CHILL_TIME);
+            System.out.println("Barber are ready to work");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     static class Customer extends Thread {
@@ -58,28 +74,14 @@ public class Barbershop extends Thread {
         }
 
         public void run() {
-            //                mutex.acquire();
             if (waiting < CHAIRS) {
                 System.out.println("Customer " + this.number + " is waiting on seat");
                 waiting++;
                 customers.release();
-                //                    barber.acquire();
-//                getHaircut();
-//                    mutex.release();
             } else {
                 System.out.println("Customer " + this.number + " is leaving via no free seats");
-//                mutex.release();
             }
+            currentCount++;
         }
-
-//        public void getHaircut() {
-//            System.out.println("Customer " + this.number + " ready to get a haircut");
-//            try {
-//                sleep(3000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            System.out.println("Customer " + this.number + " got a haircut");
-//        }
     }
 }
