@@ -1,11 +1,12 @@
 package semaphore_topic;
 
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class Barbershop extends Thread {
     public static final int CHAIRS = 5;
     public static Semaphore customers = new Semaphore(0);
-    public static Semaphore barber = new Semaphore(0);
+    public static Semaphore barber = new Semaphore(1);
     public static Semaphore mutex = new Semaphore(1);
     public static int waiting = 0;
 
@@ -27,12 +28,10 @@ public class Barbershop extends Thread {
     public void run() {
         while (true) {
             try {
-                customers.acquire();
                 mutex.acquire();
+                customers.acquire();
+                cutHair();
                 waiting--;
-                System.out.println("Barber is cutting hair");
-                barber.release();
-                mutex.release();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -42,10 +41,13 @@ public class Barbershop extends Thread {
     public void cutHair() {
         System.out.println("The barber is cutting hair");
         try {
-            sleep(5000);
+            sleep(3500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("Barber finished work");
+        mutex.release();
+        barber.release();
     }
 
     static class Customer extends Thread {
@@ -56,35 +58,28 @@ public class Barbershop extends Thread {
         }
 
         public void run() {
-            try {
-                mutex.acquire();
-                if (waiting < CHAIRS) {
-                    System.out.println("Customer " + this.number + " is waiting");
-                    waiting++;
-                    customers.release();
-                    mutex.release();
-                    try {
-                        barber.acquire();
-                        getHaircut();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    System.out.println("Customer " + this.number + " is leaving");
-                    mutex.release();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            //                mutex.acquire();
+            if (waiting < CHAIRS) {
+                System.out.println("Customer " + this.number + " is waiting on seat");
+                waiting++;
+                customers.release();
+                //                    barber.acquire();
+//                getHaircut();
+//                    mutex.release();
+            } else {
+                System.out.println("Customer " + this.number + " is leaving via no free seats");
+//                mutex.release();
             }
         }
 
-        public void getHaircut() {
-            System.out.println("Customer " + this.number + " is getting a haircut");
-            try {
-                sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        public void getHaircut() {
+//            System.out.println("Customer " + this.number + " ready to get a haircut");
+//            try {
+//                sleep(3000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            System.out.println("Customer " + this.number + " got a haircut");
+//        }
     }
 }
