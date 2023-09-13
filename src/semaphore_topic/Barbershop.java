@@ -1,6 +1,5 @@
 package semaphore_topic;
 
-import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class Barbershop extends Thread {
