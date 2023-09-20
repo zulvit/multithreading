@@ -11,7 +11,7 @@ public class Barbershop {
     private final Semaphore barber = new Semaphore(0);
     private final Semaphore mutex = new Semaphore(1);
     private final Semaphore clientSemaphore = new Semaphore(MAX_SEATS);
-
+    private final static int CUSTOMER_INTERVAL = 2000;
     private final BarbershopUI ui;
 
     public Barbershop() {
@@ -30,6 +30,7 @@ public class Barbershop {
             Thread thread = new Thread(new Client(clientSemaphore));
             ui.addClientUI(thread);
             thread.start();
+            thread.join();
             barber.release();
             mutex.release();
         } catch (InterruptedException e) {
@@ -48,7 +49,7 @@ public class Barbershop {
                         waitingClients.decrementAndGet();
                         ui.changeClientColorToOrange();
                         mutex.release();
-                        Thread.sleep((int) (Math.random() + 1) * 1000);
+                        Thread.sleep((int) (Math.random() + 1) * CUSTOMER_INTERVAL);
                         ui.removeClientUI();
                         clientSemaphore.release();
                     } else {
