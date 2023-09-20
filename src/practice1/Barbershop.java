@@ -46,10 +46,10 @@ public class Barbershop {
                     mutex.acquire();
                     if (waitingClients.get() > 0) {
                         waitingClients.decrementAndGet();
-                        ui.changeClientColorToOrange(); // изменить цвет на оранжевый
+                        ui.changeClientColorToOrange();
                         mutex.release();
-                        Thread.sleep((int) (Math.random() + 1) * 1000);  // имитация стрижки
-                        ui.removeClientUI();  // удалить клиента
+                        Thread.sleep((int) (Math.random() + 1) * 1000);
+                        ui.removeClientUI();
                         clientSemaphore.release();
                     } else {
                         mutex.release();
@@ -73,11 +73,11 @@ class Client implements Runnable {
     public void run() {
         try {
             mutex.acquire();
-            System.out.println(Thread.currentThread().getName() + ": клиент сел в ожидание.");
+            System.out.println(Thread.currentThread().getName() + ": РєР»РёРµРЅС‚ СЃРµР» РІ РѕР¶РёРґР°РЅРёРµ.");
             mutex.release();
 
             clientSemaphore.acquire();
-            System.out.println(Thread.currentThread().getName() + ": клиент ушёл.");
+            System.out.println(Thread.currentThread().getName() + ": РєР»РёРµРЅС‚ СѓС€С‘Р».");
             clientSemaphore.release();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
