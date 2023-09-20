@@ -1,15 +1,15 @@
-package semaphore_topic;
+package lab1;
 
 import java.util.concurrent.Semaphore;
 
 public class Barbershop extends Thread {
-    public static final int CHAIRS = 5;
-    public static Semaphore customers = new Semaphore(0);
-    public static Semaphore barber = new Semaphore(1);
-    public static Semaphore mutex = new Semaphore(1);
-    public static int waiting = 0;
-    private static final int COUNT = 20;
+    private static final Semaphore customers = new Semaphore(0);
+    private static final Semaphore barber = new Semaphore(1);
+    private static final Semaphore mutex = new Semaphore(1);
+    private static int waiting = 0;
     private static int currentCount = 0;
+    private static final int COUNT = 20;
+    public static final int CHAIRS = 5;
     private final static int CHILL_TIME = 1500;
     private final static int WORK_TIME = 3500;
     private final static int CUSTOMER_INTERVAL = 2000;
