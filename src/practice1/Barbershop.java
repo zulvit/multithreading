@@ -45,12 +45,12 @@ public class Barbershop {
                     barber.acquire();
                     mutex.acquire();
                     if (waitingClients.get() > 0) {
-                        System.out.println("Парикмахер начал стрижку.");
+                        System.out.println("РџР°СЂРёРєРјР°С…РµСЂ РЅР°С‡Р°Р» СЃС‚СЂРёР¶РєСѓ.");
                         waitingClients.decrementAndGet();
                         ui.changeClientColorToOrange();
                         mutex.release();
                         Thread.sleep((int) (Math.random() + 1) * 5000);
-                        System.out.println("Парикмахер закончил стрижку.");
+                        System.out.println("РџР°СЂРёРєРјР°С…РµСЂ Р·Р°РєРѕРЅС‡РёР» СЃС‚СЂРёР¶РєСѓ.");
                         ui.removeClientUI();
                         clientSemaphore.release();
                     } else {
@@ -75,10 +75,10 @@ class Client implements Runnable {
     public void run() {
         try {
             mutex.acquire();
-            System.out.println(Thread.currentThread().getName() + ": клиент сел в ожидание.");
+            System.out.println(Thread.currentThread().getName() + ": РєР»РёРµРЅС‚ СЃРµР» РІ РѕР¶РёРґР°РЅРёРµ.");
             mutex.release();
             clientSemaphore.acquire();
-//            System.out.println(Thread.currentThread().getName() + ": клиент ушёл.");
+//            System.out.println(Thread.currentThread().getName() + ": РєР»РёРµРЅС‚ СѓС€С‘Р».");
             clientSemaphore.release();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
