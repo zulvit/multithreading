@@ -24,7 +24,7 @@ class FileSumThread implements Runnable {
                 sum += number;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         sumHolder.addToTotalSum(sum);
