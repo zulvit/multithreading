@@ -30,6 +30,7 @@ public class Barbershop extends Thread {
                 customers.acquire();
                 mutex.acquire();
                 waiting--;
+                cutHair();
                 System.out.println("Barber is cutting hair");
                 barber.release();
                 mutex.release();

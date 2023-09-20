@@ -1,12 +1,13 @@
 package practice1;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static semaphore_topic.Barbershop.mutex;
 
 public class Barbershop {
     public static final int MAX_SEATS = 5;
-    private int waitingClients = 0;
+    private final AtomicInteger waitingClients = new AtomicInteger(0);
     private final Semaphore barber = new Semaphore(0);
     private final Semaphore mutex = new Semaphore(1);
     private final Semaphore clientSemaphore = new Semaphore(MAX_SEATS);
@@ -25,14 +26,11 @@ public class Barbershop {
     public void addClient() {
         try {
             mutex.acquire();
-            if (waitingClients < MAX_SEATS) {
-                waitingClients++;
-                ui.addClientUI();
-                new Thread(new Client(clientSemaphore)).start();
-                barber.release();
-            } else {
-                System.out.println("Нет мест для новых клиентов");
-            }
+            waitingClients.incrementAndGet();
+            Thread thread = new Thread(new Client(clientSemaphore));
+            ui.addClientUI(thread);
+            thread.start();
+            barber.release();
             mutex.release();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -46,11 +44,11 @@ public class Barbershop {
                 try {
                     barber.acquire();
                     mutex.acquire();
-                    if(waitingClients > 0) {
-                        waitingClients--;
+                    if (waitingClients.get() > 0) {
+                        waitingClients.decrementAndGet();
                         ui.changeClientColorToOrange(); // изменить цвет на оранжевый
                         mutex.release();
-                        Thread.sleep(1000);  // имитация стрижки
+                        Thread.sleep((int) (Math.random() + 1) * 1000);  // имитация стрижки
                         ui.removeClientUI();  // удалить клиента
                         clientSemaphore.release();
                     } else {

@@ -33,22 +33,20 @@ public class BarbershopUI {
 
     // Метод для обновления UI
     // Метод для обновления UI (добавление клиента)
-    public void addClientUI() {
-        if (labels.size() < Barbershop.MAX_SEATS) {
-            JLabel label = new JLabel("Client");
-            label.setOpaque(true);
-            label.setBackground(Color.RED);
-            label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2, true));
-            labels.add(label);
-            panel.add(label);
-            panel.revalidate();
-            panel.repaint();
-        }
+    public void addClientUI(Thread thread) {
+        JLabel label = new JLabel("Client: " + thread.getName());
+        label.setOpaque(true);
+        label.setBackground(Color.RED);
+        label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2, true));
+        labels.add(label);
+        panel.add(label);
+        panel.revalidate();
+        panel.repaint();
     }
 
     // Метод для изменения цвета клиента при стрижке
     public void changeClientColorToOrange() {
-        if(!labels.isEmpty()) {
+        if (!labels.isEmpty()) {
             JLabel firstClient = labels.peek();
             firstClient.setBackground(Color.ORANGE);
             panel.revalidate();
