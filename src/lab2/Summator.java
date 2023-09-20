@@ -12,9 +12,21 @@ public class Summator {
     private static final int STR_COUNT = 10;
     private static final String FILE_NAME = "/test";
     private static final String FILE_SUFFIX = ".txt";
+    private static final boolean NEED_GENERATION = false;
 
-    public static void main(String[] args) {
-        generateFiles();
+    public static void main(String[] args) throws InterruptedException {
+        if(NEED_GENERATION) {
+            generateFiles();
+        }
+        SumHolder sumHolder = new SumHolder();
+        for (int i = 0; i < FILES_COUNT; i++) {
+            String fileName = FILE_PATH + FILE_NAME + i + FILE_SUFFIX;
+            Thread thread = new Thread(new FileSumThread(fileName, sumHolder));
+            thread.start();
+            System.out.println(thread.getName() + " started");
+            thread.join();
+        }
+        System.out.println(sumHolder.getTotalSum());
     }
 
     public static void generateFiles(){
