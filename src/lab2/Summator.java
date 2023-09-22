@@ -1,15 +1,14 @@
 package lab2;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Random;
 
 public class Summator {
     private static final String FILE_PATH = "Lab2_files";
-    private static final int FILES_COUNT = 17;
-    private static final int STR_COUNT = 10;
+    private static final int FILES_COUNT = 107;
+    private static final int STR_COUNT = 10000000;
     private static final String FILE_NAME = "/test";
     private static final String FILE_SUFFIX = ".txt";
     private static final boolean NEED_GENERATION = false;
@@ -19,6 +18,7 @@ public class Summator {
             generateFiles();
         }
         SumHolder sumHolder = new SumHolder();
+        var start = LocalDateTime.now();
         for (int i = 0; i < FILES_COUNT; i++) {
             String fileName = FILE_PATH + FILE_NAME + i + FILE_SUFFIX;
             Thread thread = new Thread(new FileSumThread(fileName, sumHolder));
@@ -26,7 +26,28 @@ public class Summator {
             System.out.println(thread.getName() + " started");
             thread.join();
         }
-        System.out.println(sumHolder.getTotalSum());
+        var end = LocalDateTime.now();
+        System.out.println("Multithreading solution = " + Duration.between(start, end).toMillis() + " ms");
+        System.out.println("Sum = " + sumHolder.getTotalSum());
+
+        System.out.println("Starting solution in 1 thread");
+        int sum = 0;
+        var s = LocalDateTime.now();
+        for (int i = 0; i < FILES_COUNT; i++) {
+            String filename = FILE_PATH + FILE_NAME + i + FILE_SUFFIX;
+            try (BufferedReader reader = new BufferedReader(new FileReader(filename))){
+                String line;
+                while ((line = reader.readLine())!=null){
+                    int number = Integer.parseInt(line);
+                    sum+=number;
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        var e = LocalDateTime.now();
+        System.out.println("1 thread silution = " + Duration.between(s, e).toMillis() + " ms");
+        System.out.println("sum = " + sum);
     }
 
     public static void generateFiles(){
