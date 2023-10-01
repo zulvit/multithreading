@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class FileGenerator {
     private final int filesCount;
@@ -30,16 +31,35 @@ public class FileGenerator {
         this.random = new Random();
     }
 
-    public void generateFiles(){
+    public void generateFiles() throws InterruptedException {
         var startGenerationFiles = LocalDateTime.now();
-        File file = new File(this.filepath);
-        file.mkdir();
-        for (int i = 0; i < filesCount; i++) {
-            int finalI = i;
-            Future<?> future = executorService.submit(() -> {
-                String filename = filepath + this.filename + finalI + filesuffix;
+//        File file = new File(this.filepath);
+//        file.mkdir();
+//        for (int i = 0; i < filesCount; i++) {
+//            int finalI = i;
+//            Future<?> future = executorService.submit(() -> {
+//                String filename = filepath + this.filename + finalI + filesuffix;
+//                File fileToWrite = new File(filename);
+//
+//                try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileToWrite))) {
+//                    for (int j = 0; j < strCount; j++) {
+//                        int randomNumber = random.nextInt(21) - 10;
+//                        bw.write(Integer.toString(randomNumber));
+//                        bw.newLine();
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//        }
+//        executorService.shutdown();
+//        executorService.awaitTermination(5, TimeUnit.SECONDS);
+        Thread thread = new Thread(() ->{
+           File file = new File(this.filepath);
+           file.mkdir();
+            for (int i = 0; i < filesCount; i++) {
+                String filename = filepath + this.filename + i + filesuffix;
                 File fileToWrite = new File(filename);
-
                 try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileToWrite))) {
                     for (int j = 0; j < strCount; j++) {
                         int randomNumber = random.nextInt(21) - 10;
@@ -49,9 +69,10 @@ public class FileGenerator {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            });
-        }
-        executorService.shutdown();
+            }
+        });
+        thread.start();
+        thread.join();
         var endGenerationFiles = LocalDateTime.now();
         System.out.println("Generated files in " + Duration.between(startGenerationFiles, endGenerationFiles).toMillis() + " ms");
     }

@@ -19,7 +19,7 @@ public class MainSum {
         syncSumCount();
     }
 
-    public static void generateFiles() {
+    public static void generateFiles() throws InterruptedException {
         FileGenerator fileGenerator = new FileGenerator(FILES_COUNT, FILE_NAME, FILE_PATH, FILE_SUFFIX, STR_COUNT);
         fileGenerator.generateFiles();
     }
