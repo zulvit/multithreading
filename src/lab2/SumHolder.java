@@ -1,13 +1,13 @@
 package lab2;
 
 class SumHolder {
-    private int totalSum = 0;
+    private long totalSum = 0;
 
-    public void addToTotalSum(int sum) {
+    public synchronized void addToTotalSum(long sum) {
         totalSum += sum;
     }
 
-    public int getTotalSum() {
+    public synchronized long getTotalSum() {
         return totalSum;
     }
 }
