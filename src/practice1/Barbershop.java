@@ -49,7 +49,7 @@ public class Barbershop {
                         waitingClients.decrementAndGet();
                         ui.changeClientColorToOrange();
                         mutex.release();
-                        Thread.sleep((int) (Math.random() + 1) * 5000);
+                        Thread.sleep((int) (Math.random() + 1) * 2000);
                         System.out.println("Парикмахер закончил стрижку.");
                         ui.removeClientUI();
                         clientSemaphore.release();

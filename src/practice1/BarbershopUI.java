@@ -31,8 +31,8 @@ public class BarbershopUI {
         frame.setVisible(true);
     }
 
-    // Метод для обновления UI
-    // Метод для обновления UI (добавление клиента)
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
     public void addClientUI(Thread thread) {
         JLabel label = new JLabel("Client: " + thread.getName());
         label.setOpaque(true);
@@ -44,7 +44,7 @@ public class BarbershopUI {
         panel.repaint();
     }
 
-    // Метод для изменения цвета клиента при стрижке
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public void changeClientColorToOrange() {
         if (!labels.isEmpty()) {
             JLabel firstClient = labels.peek();
