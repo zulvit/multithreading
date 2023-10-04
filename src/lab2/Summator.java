@@ -48,7 +48,7 @@ public class Summator {
         SumHolder sumHolder = new SumHolder();
         List<Future<Long>> list = new ArrayList<>();
         var start = LocalDateTime.now();
-        ExecutorService executorService = Executors.newFixedThreadPool(FILES_COUNT);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         for (int i = 0; i < FILES_COUNT; i++) {
             int finalI = i;
             Future<Long> future = executorService.submit(() -> {

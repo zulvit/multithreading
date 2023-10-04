@@ -6,7 +6,7 @@ public class MainSum {
     private static final int STR_COUNT = 10000000;
     private static final String FILE_NAME = "/test";
     private static final String FILE_SUFFIX = ".txt";
-    private static final boolean NEED_GENERATION = true;
+    private static final boolean NEED_GENERATION = false;
     private static final Summator summator = new Summator(FILE_PATH, FILES_COUNT, FILE_NAME, FILE_SUFFIX);
 
     public static void main(String[] args) throws InterruptedException {
