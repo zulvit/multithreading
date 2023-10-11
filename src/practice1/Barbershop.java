@@ -1,88 +1,51 @@
 package practice1;
 
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static semaphore_topic.Barbershop.mutex;
-
-public class Barbershop {
+public class Barbershop implements BarberShopUIEventListener {
     public static final int MAX_SEATS = 5;
-    private final AtomicInteger waitingClients = new AtomicInteger(0);
-    private final Semaphore barber = new Semaphore(0);
-    private final Semaphore mutex = new Semaphore(1);
-    private final Semaphore clientSemaphore = new Semaphore(MAX_SEATS);
+    private final Semaphore MAX_NUMBER_OF_PEOPLE_CAN_GET_HAIRCUT = new Semaphore(1);
+    private static int clientCurrentCounter = 0;
+    private static int clientCounter = 0;
+    private final BarbershopUI barbershopUI;
 
-    private final BarbershopUI ui;
-
-    public Barbershop() {
-        this.ui = new BarbershopUI(this);
-        new Thread(new Barber()).start();
+    public Barbershop(BarbershopUI barbershopUI) {
+        this.barbershopUI = barbershopUI;
     }
 
-    public static void main(String[] args) {
-        new Barbershop();
+    public static void main(String... args) {
+        BarbershopUI barbershopUI = new BarbershopUI();
+        Barbershop barbershop = new Barbershop(barbershopUI);
+        barbershopUI.setEventListener(barbershop);
     }
 
-    public void addClient() {
-        try {
-            mutex.acquire();
-            waitingClients.incrementAndGet();
-            Thread thread = new Thread(new Client(clientSemaphore));
-            ui.addClientUI(thread);
-            thread.start();
-            barber.release();
-            mutex.release();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+    public synchronized void addClient() {
+        if (clientCurrentCounter < MAX_SEATS) {
+            clientCurrentCounter++;
+            Client client = new Client(MAX_NUMBER_OF_PEOPLE_CAN_GET_HAIRCUT, clientCounter++ + " client:", this);
+            client.start();
+            barbershopUI.addClient(client);
+        } else {
+            clientCurrentCounter--;
+            System.out.println("Мест нет, клиент развернулся и ушёл.");
         }
     }
 
-    public class Barber extends Thread {
-        @Override
-        public void run() {
-            while (!Thread.interrupted()) {
-                try {
-                    barber.acquire();
-                    mutex.acquire();
-                    if (waitingClients.get() > 0) {
-                        System.out.println("Парикмахер начал стрижку.");
-                        waitingClients.decrementAndGet();
-                        ui.changeClientColorToOrange();
-                        mutex.release();
-                        Thread.sleep((int) (Math.random() + 1) * 5000);
-                        System.out.println("Парикмахер закончил стрижку.");
-                        ui.removeClientUI();
-                        clientSemaphore.release();
-                    } else {
-                        mutex.release();
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        }
+    public void clientLeave(Client client) {
+        clientCurrentCounter--;
+        barbershopUI.removeClient(client);
     }
-}
 
-class Client implements Runnable {
-    private final Semaphore clientSemaphore;
+    public void clientDone(Client client) {
+        barbershopUI.changeClientColor(client, BarbershopUI.CLIENT_WAIT_COLOR);
+    }
 
-    public Client(Semaphore clientSemaphore) {
-        this.clientSemaphore = clientSemaphore;
+    public void clientWaiting(Client client) {
+        barbershopUI.changeClientColor(client, BarbershopUI.CLIENT_PROCESS_COLOR);
     }
 
     @Override
-    public void run() {
-        try {
-            mutex.acquire();
-            System.out.println(Thread.currentThread().getName() + ": клиент сел в ожидание.");
-            mutex.release();
-            clientSemaphore.acquire();
-//            System.out.println(Thread.currentThread().getName() + ": клиент ушёл.");
-            clientSemaphore.release();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+    public void onAddClientButtonClicked() {
+        addClient();
     }
 }
-
